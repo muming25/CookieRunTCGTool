@@ -297,6 +297,7 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
 	int widthFull = 210;
 	int widthOneWord = 40;
 	int widthTwoWord = 50;
+	int widthThreeWord = 60;
 	int height = 22;
 	int x = paddingToWindow, y = paddingToWindow;
 	int maxObjectForALine = 4;
@@ -456,7 +457,7 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
         nextObject(widthTwoWord);
         
         cb_extra = new JCheckBox("Extra");
-        cb_extra.setBounds(x, y, widthTwoWord, height);
+        cb_extra.setBounds(x, y, widthThreeWord, height);
         cb_extra.setSelected(mDefaultState.getDefaultExtraFlag());
         mSearchPane.add(cb_extra);
         cb_extra.addActionListener(new ActionListener() {
