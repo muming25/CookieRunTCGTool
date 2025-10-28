@@ -12,6 +12,7 @@ public class Deck {
 	private List<Card> ItemList;
 	private List<Card> TrapList;
 	private List<Card> StageList;
+	private List<Card> extraList;
 	
 	public Deck() {
 		cardList = new ArrayList<Card>();
@@ -23,6 +24,7 @@ public class Deck {
 		ItemList = new ArrayList<Card>();
 		TrapList = new ArrayList<Card>();
 		StageList = new ArrayList<Card>();
+		extraList = new ArrayList<Card>();
 	}
 
 	public List<Card> getAllCards() {
@@ -59,22 +61,26 @@ public class Deck {
 	}
 	
 	private void addToTargetList(Card card) {
-		switch(card.getType()) {
-			case Cookie:
-				if(card.isFlip()) {
-					flipList.add(card);
-				}
-				CookieList[card.getLv()].add(card);
-				break;
-			case Item:
-				ItemList.add(card);
-				break;
-			case Trap:
-				TrapList.add(card);
-				break;
-			case Stage:
-				StageList.add(card);
-				break;
+		if(card.isExtra()) {
+			extraList.add(card);
+		} else { 
+			switch(card.getType()) {
+				case Cookie:
+					if(card.isFlip()) {
+						flipList.add(card);
+					}
+					CookieList[card.getLv()].add(card);
+					break;
+				case Item:
+					ItemList.add(card);
+					break;
+				case Trap:
+					TrapList.add(card);
+					break;
+				case Stage:
+					StageList.add(card);
+					break;
+			}
 		}
 	}
 	
@@ -94,22 +100,26 @@ public class Deck {
 	}
 		
 	private boolean removeFromTargetList(Card card) {
-		switch(card.getType()) {
-			case Cookie:
-				if(card.isFlip()) {
-					flipList.remove(card);
-				}
-				CookieList[card.getLv()].remove(card);
-				break;
-			case Item:
-				ItemList.remove(card);
-				break;
-			case Trap:
-				TrapList.remove(card);
-				break;
-			case Stage:
-				StageList.remove(card);
-				break;
+		if(card.isExtra()) {
+			extraList.remove(card);
+		} else {
+			switch(card.getType()) {
+				case Cookie:
+					if(card.isFlip()) {
+						flipList.remove(card);
+					}
+					CookieList[card.getLv()].remove(card);
+					break;
+				case Item:
+					ItemList.remove(card);
+					break;
+				case Trap:
+					TrapList.remove(card);
+					break;
+				case Stage:
+					StageList.remove(card);
+					break;
+			}
 		}
 		return cardList.remove(card);
 	}
@@ -117,6 +127,7 @@ public class Deck {
 	public void clear() {
 		cardList.clear();
 		flipList.clear();
+		extraList.clear();
 		CookieList[0].clear();
 		CookieList[1].clear();
 		CookieList[2].clear();
@@ -136,11 +147,15 @@ public class Deck {
     }
 
     public int getCardCount() {
-    	return getTargetCardCount(cardList);
+    	return getTargetCardCount(cardList) - getExtraCount();
     }
     
     public int getFlipCount() {
     	return getTargetCardCount(flipList);
+    }
+    
+    public int getExtraCount() {
+    	return getTargetCardCount(extraList);
     }
     
     public int getTargetCardCount(List<Card> cards) {

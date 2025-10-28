@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.CardUtil;
+import util.CardUtil.CardColor;
 import util.CardUtil.CardType;
 
 public class CardList {
@@ -17,6 +18,8 @@ public class CardList {
 	private boolean _search_type[];
 	private boolean _search_lv[];
 	private boolean _search_flip;
+	private boolean _search_multicolor;
+	private boolean _search_extra;
 	private List<String> _search_pack_list;
 	
 	public static CardList getInstance() {
@@ -33,6 +36,8 @@ public class CardList {
 		_search_type = new boolean[CardUtil.TYPE_MAX];
 		_search_lv = new boolean[CardUtil.LEVEL_MAX + 1];
 		_search_flip = false;
+		_search_multicolor = false;
+		_search_extra = false;
 		_search_pack_list = new ArrayList<String>();
 	}
 	
@@ -44,7 +49,7 @@ public class CardList {
 		boolean selectColor = isSelectedColor();
 		boolean selectType = isSelectedType();
 		boolean selectLv = isSelectedLv();
-		if (!selectColor && !selectType && !_search_flip && _search_pack_list.size() == 0) {
+		if (!selectColor && !selectType && !_search_flip && !_search_extra && !_search_multicolor && _search_pack_list.size() == 0) {
 			return getAllCards();
 		}
 		
@@ -54,16 +59,20 @@ public class CardList {
 		boolean flipCorrect;
 		boolean lvCorrect;
 		boolean packCorrect;
+		boolean extraCorrect;
 		dumpPackList();
 		for (Card c: cardList) {
-			colorCorrect = !selectColor || _search_color[c.getColor().getValue()];
+				// 顏色篩選邏輯: 支援多色卡片
+			colorCorrect = !selectColor || hasMatchingColor(c);
 			typeCorrect = !selectType || _search_type[c.getType().getValue()];
 			lvCorrect = !selectLv || !_search_type[CardType.Cookie.getValue()]
 					|| c.getType() != CardType.Cookie || _search_lv[c.getLv()];
 			flipCorrect = !_search_flip || c.isFlip();
+			boolean multiColorCorrect = !_search_multicolor || c.isMultiColor();
 			packCorrect = _search_pack_list.size() == 0 || _search_pack_list.contains(c.getPack());
+			extraCorrect = !_search_extra || c.isExtra();
 //			c.dump();
-			if (colorCorrect && lvCorrect && typeCorrect && flipCorrect && packCorrect) {
+			if (colorCorrect && lvCorrect && typeCorrect && flipCorrect && multiColorCorrect && packCorrect && extraCorrect) {
 				selectList.add(c);
 			}
 		}
@@ -112,6 +121,26 @@ public class CardList {
 
 	public void setFlip(boolean enabled) {
 		_search_flip = enabled;
+	}
+	
+	public void setMultiColor(boolean enabled) {
+		_search_multicolor = enabled;
+	}
+	
+	public void setExtra(boolean enabled) {
+		_search_extra = enabled;
+	}
+	
+	private boolean hasMatchingColor(Card card) {
+		if (!card.isMultiColor()) {
+			return _search_color[card.getColor().getValue()];
+		}
+		for (CardColor color : card.getColors()) {
+			if (_search_color[color.getValue()]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setPack(String pack, boolean enabled) {

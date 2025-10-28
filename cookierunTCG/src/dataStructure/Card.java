@@ -2,6 +2,7 @@ package dataStructure;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -20,8 +21,11 @@ public class Card {
 	private String _id;
 	private String _name;
 	private CardColor _color;
+	private List<CardColor> _colors;
+	private boolean _isMultiColor;
 	private CardType _type;
 	private boolean _isFlip;
+	private boolean _isExtra;
 	private String _rare;
 	private String _mark;
 	private int _lv;
@@ -32,21 +36,30 @@ public class Card {
 	private boolean _isImageLoaded = false;
 	
 	public Card(String pack, String id, String name, CardColor color, CardType type,
-			boolean flip, String rare, String mark, int lv) {
+			boolean flip, String rare, String mark, int lv, boolean extra) {
+		this(pack, id, name, Arrays.asList(color), type, flip, rare, mark, lv, extra);
+	}
+	
+	public Card(String pack, String id, String name, List<CardColor> colors, CardType type,
+			boolean flip, String rare, String mark, int lv, boolean extra) {
 		_PanelList = new ArrayList<ClickableCardPanel>();
 		_serial_number = SERIAL_NUMBER++;
 		_pack = pack;
 		_id = id;
 		_name = name;
-		_color = color;
+		_colors = new ArrayList<>(colors);
+		_color = colors.get(0);
+		_isMultiColor = colors.size() > 1;
 		_type = type;
 		_isFlip = flip;
+		_isExtra = extra;
 		_rare = rare;
 		_mark = mark;
 		_lv = lv;
 		_cardCount = 0;
 		int lv_weight = CardUtil.LEVEL_MAX  - _lv + 1;
 		_position = _serial_number
+				+ (_isExtra ? Config.CARD_SORT_VALUE_EXTRA : 0)
 				+ (CardUtil.TYPE_MAX - _type.getValue()) * Config.CARD_SORT_VALUE_TYPE
 				+ (_isFlip ? 0 : Config.CARD_SORT_VALUE_FLIP)
 				+ lv_weight * Config.CARD_SORT_VALUE_LEVEL
@@ -79,9 +92,9 @@ public class Card {
 
 	public String dump() {
         System.out.println(_pack + ", " + _id + ", " + _name + ", " + _color + ", " + _type + ", " 
-	+ _isFlip + ", " + _rare + ", " + _mark +", lv = "+_lv+"      : "+_position);
+	+ _isFlip + ", " + _rare + ", " + _mark +", lv = "+_lv+", extra = "+_isExtra+"      : "+_position);
 		return _pack + ", " + _id + ", " + _name + ", " + _color + ", " + _type + ", " 
-	+ _isFlip + ", " + _rare + ", " + _mark +", lv = "+_lv+"      : "+_position;
+	+ _isFlip + ", " + _rare + ", " + _mark +", lv = "+_lv+", extra = "+_isExtra+"      : "+_position;
 	}
 
 	public int compareTo(Card card) {
@@ -107,6 +120,7 @@ public class Card {
 			lv_weight = 0;
 		}
 		_position = _serial_number
+				+ (_isExtra ? Config.CARD_SORT_VALUE_EXTRA : 0)
 				+ (CardUtil.TYPE_MAX - _type.getValue()) * Config.CARD_SORT_VALUE_TYPE
 				+ (_isFlip ? 0 : Config.CARD_SORT_VALUE_FLIP)
 				+ lv_weight * Config.CARD_SORT_VALUE_LEVEL
@@ -135,6 +149,18 @@ public class Card {
 	public CardColor getColor() {
 		return _color;
 	}
+	
+	public List<CardColor> getColors() {
+		return new ArrayList<>(_colors);
+	}
+	
+	public boolean isMultiColor() {
+		return _isMultiColor;
+	}
+	
+	public boolean hasColor(CardColor color) {
+		return _colors.contains(color);
+	}
 
 	public CardType getType() {
 		return _type;
@@ -146,6 +172,10 @@ public class Card {
 	
 	public boolean isFlip() {
 		return _isFlip;
+	}
+
+	public boolean isExtra() {
+		return _isExtra;
 	}
 
 	public ImageIcon getcardIcon() {

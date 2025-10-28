@@ -89,13 +89,16 @@ public class CardLoader {
 	        while((data= input.readLine())!=null) {
 	            if (!data.equals("") && !data.startsWith("//")) {
 	            	String[] cardData = data.split(",");
-	            	CardColor color = CardColor.Green;
+	            	List<CardColor> colors = new ArrayList<CardColor>();
+	            	String colorString = cardData[2];
 	            	for (int i=0; i<CardUtil.COLOR_MAX; i++) {
 	            		CardColor c = CardColor.fromValue(i);
-	            		if (cardData[2].equals(c.getName())) {
-	            			color = c;
-	            			break;
+	            		if (colorString.contains(c.getName())) {
+	            			colors.add(c);
 	            		}
+	            		}
+	            	if (colors.isEmpty()) {
+	            		colors.add(CardColor.Green);
 	            	}
 	            	
 	            	int level = 0;
@@ -115,7 +118,7 @@ public class CardLoader {
 	            		type = CardType.Cookie;
 	            	}
 	            	
-	            	Card c = new Card(packName, cardData[0], cardData[1], color, type, cardData[4].equals("F") ,cardData[5], cardData[6], level);
+	            	Card c = new Card(packName, cardData[0], cardData[1], colors, type, cardData[4].equals("F") ,cardData[5], cardData[6], level, cardData[4].equals("E") );
 	            	cardList.add(c);
 	            }
 	        }

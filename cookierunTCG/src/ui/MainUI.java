@@ -95,7 +95,7 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
     private JCheckBox[] cb_level;
     private JCheckBox[] cb_pack;
     private JCheckBox cb_type_cookie, cb_type_item, cb_type_trap, cb_type_stage;
-    private JCheckBox cb_flip;
+    private JCheckBox cb_flip, cb_multicolor, cb_extra;
 //    private JCheckBox cb_version_BS1, cb_version_ST1, cb_version_ST2, cb_version_ST3;
     private JLabel label_special, label_version;
 
@@ -106,7 +106,7 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
     private TextField mDeckText;
     private JButton loadBtn, saveBtn, selectBtn;
     private JButton mClearDeckBtn;
-    private JLabel mCardCountTxt, mFlipCountTxt, mDeckCookieSummaryTxt, mDeckOtherSummaryTxt;
+    private JLabel mCardCountTxt, mFlipCountTxt, mDeckCookieSummaryTxt, mDeckOtherSummaryTxt, mExtraCountTxt;
     private JButton showDeckBtn;
 
     private void initialize() {
@@ -255,6 +255,10 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
         mFlipCountTxt = new JLabel("0/16");
         mFlipCountTxt.setBounds(491, 333, 36, 22);
         frame.getContentPane().add(mFlipCountTxt);
+        
+        mExtraCountTxt = new JLabel("0/6");
+        mExtraCountTxt.setBounds(459, 333, 36, 22);
+        frame.getContentPane().add(mExtraCountTxt);
         
         mDeckCookieSummaryTxt = new JLabel("餅乾 : 0   ( LV1 : 0   LV2 : 0   LV3 : 0 )");
         mDeckCookieSummaryTxt.setBounds(245, 322, 236, 22);
@@ -436,6 +440,31 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
             }
         });
         
+        nextObject(widthTwoWord);
+        
+        cb_multicolor = new JCheckBox("多色");
+        cb_multicolor.setBounds(x, y, widthTwoWord, height);
+        cb_multicolor.setSelected(mDefaultState.getDefaultMultiColorFlag());
+        mSearchPane.add(cb_multicolor);
+        cb_multicolor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mDefaultState.setDefaultMultiColorFlag(cb_multicolor.isSelected());
+            }
+        });
+
+        
+        nextObject(widthTwoWord);
+        
+        cb_extra = new JCheckBox("Extra");
+        cb_extra.setBounds(x, y, widthTwoWord, height);
+        cb_extra.setSelected(mDefaultState.getDefaultExtraFlag());
+        mSearchPane.add(cb_extra);
+        cb_extra.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	mDefaultState.setDefaultExtraFlag(cb_extra.isSelected());
+            }
+        });
+        
         nextLine();
         nextLine();
 
@@ -507,6 +536,7 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
     	}
 
     	cb_flip.setSelected(false);
+    	cb_multicolor.setSelected(false);
     }
     
     private void updateCardList() {
@@ -526,6 +556,8 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
             list.setPack(CardUtil.CardPack.get(i), cb_pack[i].isSelected());
     	}
         list.setFlip(cb_flip.isSelected());
+        list.setMultiColor(cb_multicolor.isSelected());
+        list.setExtra(cb_extra.isSelected());
         
         mCardsPane.removeAll();
         UIUtil.showDeck(this, mCardsPane, list.getSelectCards(), 13, 6, UIUtil.CARD_SIZE_SMALL, false);
@@ -551,6 +583,13 @@ public class MainUI implements CardListCallBack, ConfigChangedCallback {
         	mFlipCountTxt.setForeground(Color.RED);
         } else {
         	mFlipCountTxt.setForeground(Color.BLACK);
+        }
+        
+        mExtraCountTxt.setText(mDeck.getExtraCount()+"/6");
+        if (mDeck.getExtraCount() > 6) {
+        	mExtraCountTxt.setForeground(Color.RED);
+        } else {
+        	mExtraCountTxt.setForeground(Color.BLACK);
         }
         
 

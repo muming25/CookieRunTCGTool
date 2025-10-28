@@ -26,6 +26,8 @@ public class DefaultState {
 	public boolean[] type;
 	public boolean[] lv;
 	public boolean flip;
+	public boolean extra;
+	public boolean multicolor;
 	private static DefaultState instance;
 	private List<String> _search_pack_list;
 
@@ -96,6 +98,13 @@ public class DefaultState {
 					flip = true;
 				}
 			}
+			
+			// multicolor
+			if ((data = input.readLine()) != null) {
+				if (data.equals("v")) {
+					multicolor = true;
+				}
+			}
 
 			// lv
 			if ((data = input.readLine()) != null) {
@@ -127,6 +136,13 @@ public class DefaultState {
 				Config.CARD_SORT_ORDER_COLOR = Integer.valueOf(flags[3]);
 			}
 			
+			// extra
+			if ((data = input.readLine()) != null) {
+				if (data.equals("v")) {
+					extra = true;
+				}
+			}
+			
 			input.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("An error occurred.");
@@ -149,6 +165,7 @@ public class DefaultState {
 			type[i] = false;
 		}
 		flip = false;
+		multicolor = false;
 	}
 
 	public void saveDefaultState() {
@@ -186,6 +203,12 @@ public class DefaultState {
 			} else {
 				fw.write("_\n");
 			}
+			
+			if (multicolor) {
+				fw.write("v\n");
+			} else {
+				fw.write("_\n");
+			}
 
 			for (int i = 1; i < lv.length; i++) {
 				if (i > 1) {
@@ -215,6 +238,13 @@ public class DefaultState {
 			fw.write(Config.CARD_SORT_ORDER_FLIP+",");
 			fw.write(Config.CARD_SORT_ORDER_LEVEL+",");
 			fw.write(Config.CARD_SORT_ORDER_COLOR+"\n");
+
+			
+			if (extra) {
+				fw.write("v\n");
+			} else {
+				fw.write("_\n");
+			}
 			
 			fw.flush();
 			fw.close();
@@ -238,6 +268,10 @@ public class DefaultState {
 	public boolean getDefaultFlipFlag() {
 		return flip;
 	}
+	
+	public boolean getDefaultMultiColorFlag() {
+		return multicolor;
+	}
 
 	public boolean getDefaultLvFlag(int i) {
 		return lv[i];
@@ -245,6 +279,10 @@ public class DefaultState {
 
 	public boolean getDefaultPackFlag(String pack) {
 		return _search_pack_list.contains(pack);
+	}
+
+	public boolean getDefaultExtraFlag() {
+		return extra;
 	}
 
 	public void setDefaultDeckName(String name) {
@@ -262,9 +300,17 @@ public class DefaultState {
 	public void setDefaultFlipFlag(boolean selected) {
 		flip = selected;
 	}
+	
+	public void setDefaultMultiColorFlag(boolean selected) {
+		multicolor = selected;
+	}
 
 	public void setDefaultLvFlag(int i, boolean selected) {
 		lv[i] = selected;
+	}
+
+	public void setDefaultExtraFlag(boolean selected) {
+		extra = selected;
 	}
 
 	public void setDefaultPackFlag(String pack, boolean selected) {
