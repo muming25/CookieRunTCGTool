@@ -1,3 +1,12 @@
+=== Version 0.4.0 : 2025-10-28
+- Add extra cards for BS8:
+  - Add flag for extra card.
+  - Add checkbox for extra card in the search panel.
+  - Add extra counter in the count panel; exclude extra cards from the main deck counter.
+  - Sort extra cards before other cards.
+- Add multicolor checkbox in the search panel.
+- Add all cards to the database up to BS8.
+
 === Version 0.3.0 : 2024-02-20
 - refactor search panel.
 - add all cards into database from BS2, ST4, ST5 and PR (Korean)
